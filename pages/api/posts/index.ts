@@ -4,11 +4,24 @@ import { PrismaClient } from '@prisma/client'
 import { NextApiHandler } from 'next'
 import superjson from 'superjson'
 
-const handler: NextApiHandler = async (req, res) => {
+const handler: NextApiHandler = async ({ method, body }, res) => {
   const prisma = new PrismaClient()
-  const data = await prisma.post.findMany()
-  const posts = data.map(post => superjson.stringify(post))
-  return res.status(200).json(posts.map(post => JSON.parse(post).json))
+  if (method === 'POST') {
+    try {
+      const { title, content } = JSON.parse(body)
+      const newPost = await prisma.post.create({
+        data: { title, content },
+      })
+      return res.status(201).json(newPost)
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({ message: 'Something went wrong saving the post' })
+    }
+  } else {
+    const data = await prisma.post.findMany()
+    const posts = data.map(post => superjson.stringify(post))
+    return res.status(200).json(posts.map(post => JSON.parse(post).json))
+  }
 }
 
 export default handler
