@@ -4,11 +4,10 @@ import { PrismaClient } from '@prisma/client'
 import { NextApiHandler } from 'next'
 import superjson from 'superjson'
 
-const handler: NextApiHandler = async ({ method, body }, res) => {
+const handler: NextApiHandler = async ({ method, body: { title, content } }, res) => {
   const prisma = new PrismaClient()
   if (method === 'POST') {
     try {
-      const { title, content } = JSON.parse(body)
       const newPost = await prisma.post.create({
         data: { title, content },
       })

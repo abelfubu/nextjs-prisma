@@ -17,6 +17,7 @@ const PostForm = () => {
       const res = await fetch(`${server}/api/posts/`, {
         method: 'POST',
         body: JSON.stringify({ title, content }),
+        headers: { 'Content-Type': 'application/json' },
       })
       return res.status === 201 && Router.push('/')
     } catch (error) {
