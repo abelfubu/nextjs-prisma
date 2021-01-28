@@ -1,14 +1,28 @@
 import { server } from 'config/server'
 import { ChangeEvent, FormEvent, useState } from 'react'
 import Router from 'next/router'
+import dynamic from 'next/dynamic'
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
+import 'react-quill/dist/quill.snow.css'
 
-interface newPost {
-  title: string
-  content: string
+const modules = {
+  toolbar: [
+    ['bold', 'italic'],
+    ['link', 'blockquote', 'code', 'image'],
+    [
+      {
+        list: 'ordered',
+      },
+      {
+        list: 'bullet',
+      },
+    ],
+  ],
 }
 
 const PostForm = () => {
-  const [{ title, content }, setPost] = useState<newPost>({ title: '', content: '' })
+  const [title, setTitle] = useState<string>('')
+  const [content, setContent] = useState<string>('Welcome!')
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -25,14 +39,15 @@ const PostForm = () => {
     }
   }
 
-  const handleChange = ({ target: { name, value } }: ChangeEvent<HTMLInputElement>) => {
-    setPost(prevState => ({ ...prevState, [name]: value }))
-    console.log({ title, content })
-  }
   return (
     <form onSubmit={handleSubmit}>
-      <input type='text' name='title' onChange={handleChange} />
-      <input type='text' name='content' onChange={handleChange} />
+      <input type='text' name='title' onChange={event => setTitle(event.target.value)} />
+      <ReactQuill
+        value={content}
+        onChange={text => setContent(text)}
+        theme='snow'
+        modules={modules}
+      />
       <input type='submit' value='Save' />
     </form>
   )
