@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import styles from '@styles/Home.module.scss'
 import Hello from '@components/Hello'
+import { server } from 'config/server'
 
 export default function Home({ posts }) {
   return (
@@ -58,7 +59,7 @@ export default function Home({ posts }) {
 }
 
 export const getStaticProps = async () => {
-  const res = await fetch(`http://localhost:3000/api/posts`)
+  const res = await fetch(`${server}/api/posts`)
   const posts = await res.json()
   return {
     props: { posts },
